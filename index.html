@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="thai">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="An interactive web page that playfully asks 'Do you love me?' Perfect for expressing affection or as a fun digital love note.">
+    <meta name="keywords" content="love, affection, interactive, web toy, romantic, playful">
+    <meta name="author" content="Jones">
+
+    <!-- Preload critical assets for speed -->
+    <link rel="preload" href="image/tenor (2).gif" as="image">
+    <link rel="preload" href="https://i.pinimg.com/originals/55/3d/42/553d42bea9b10e0662a05aa8726fc7f4.gif" as="image">
+    
+    <!-- Open Graph meta tags -->
+    <meta property="og:title" content="Do you love me? | Interactive Love Question">
+    <meta property="og:description" content="A fun, interactive way to ask someone if they love you. Try to catch the 'No' button!">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://do-you-love-me.vercel.app">
+    <meta property="og:image" content="https://yourwebsite.com/path-to-your-preview-image.jpg">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Do you love me? | Interactive Love Question">
+    <meta name="twitter:description" content="A fun, interactive way to ask someone if they love you. Try to catch the 'No' button!">
+    <meta name="twitter:image" content="https://yourwebsite.com/path-to-your-preview-image.jpg">
+
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://do-you-love-me.vercel.app">
+    <title>ไปฟิตเนสกันนนนนนนนน</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: whitesmoke;
+            font-family: Arial, sans-serif;
+            overflow-x: hidden; /* Prevent scrollbars when button moves */
+        }
+        .wrapper {
+            text-align: center;
+            padding: 20px;
+            width: 100%;
+            max-width: 600px;
+            contain: content; /* Browser optimization */
+        }
+        h2 {
+            font-size: 2em;
+            color: #e94d58;
+            margin: 15px 0;
+        }
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            min-height: 50px; /* Layout stability */
+        }
+        button {
+            width: 150px;
+            height: 40px;
+            color: white;
+            font-size: 1.2em;
+            border-radius: 30px;
+            outline: none;
+            cursor: pointer;
+            box-shadow: 0 2px 4px gray;
+            border: 2px solid #e94d58;
+            will-change: transform, left, top; /* Hardware acceleration */
+        }
+        .yes-btn {
+            background: #e94d58;
+            margin-right: 20px;
+        }
+        .no-btn {
+            background: white;
+            color: #e94d58;
+            transition: none; /* Instant movement for better 'hard to catch' feel */
+        }
+        .gif {
+            width: 300px;
+            height: auto;
+            aspect-ratio: 1/1; /* Prevent layout shift */
+            background: #eee; /* Placeholder */
+        }
+        .toggle-audio {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .toggle-audio input {
+            display: none;
+        }
+        .toggle-audio .slider {
+            width: 50px;
+            height: 25px;
+            background: red;
+            border-radius: 15px;
+            position: relative;
+            transition: background 0.3s;
+        }
+        .toggle-audio .slider::before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2.5px;
+            left: 2.5px;
+            transition: transform 0.3s;
+        }
+        .toggle-audio input:checked + .slider {
+            background: green;
+        }
+        .toggle-audio input:checked + .slider::before {
+            transform: translateX(25px);
+        }
+        .toggle-audio .label {
+            margin-left: 10px;
+            font-size: 14px;
+            color: #333;
+        }
+        @media (max-width: 600px) {
+            h2 {
+                font-size: 1.5em;
+            }
+            button {
+                width: 120px;
+                height: 35px;
+                font-size: 1em;
+            }
+            .yes-btn {
+                margin-right: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <h2 class="question">ยูจะไปเล่นฟิตเนสกับไอไหม?</h2>
+        <img class="gif" alt="gif" src="https://media1.tenor.com/m/lgwnXunQtLAAAAAd/tamon-kun-ima-docchi-tamons-b-side.gif" loading="eager" width="300" height="300" />
+        <div class="btn-group">
+            <button class="yes-btn">Yes</button>
+            <button class="no-btn">No</button>
+        </div>
+    </div>
+    <audio id="background-audio" loop preload="auto">
+        <source src="audio/brianjcb - Pixels(MP3_320K).mp3" type="audio/mp3">
+    </audio>
+    <div class="toggle-audio">
+        <input type="checkbox" id="audio-toggle">
+        <label for="audio-toggle" class="slider"></label>
+        <span class="label" id="audio-label" style="user-select: none;">Audio Off</span>
+    </div>
+    <script>
+        (function() {
+            const question = document.querySelector(".question");
+            const gif = document.querySelector(".gif");
+            const yesBtn = document.querySelector(".yes-btn");
+            const noBtn = document.querySelector(".no-btn");
+            const audio = document.getElementById('background-audio');
+            const audioToggle = document.getElementById('audio-toggle');
+            const audioLabel = document.getElementById('audio-label');
+
+            // Success GIF preloaded via link tag
+            const successGifUrl = "https://media1.tenor.com/m/hX2poI-jwxIAAAAC/tamon-kun-ima-docchi-tamon-kun.gif";
+
+            yesBtn.addEventListener("click", () => {
+                question.textContent = "เย้้! ยูไปเล่นฟิตเนสกับไอแล้ววววววววววววววววววววววววววววววววววววววววววววววววววววววววว";
+                gif.src = successGifUrl;
+            });
+
+            function moveButton(e) {
+                // Optimization: get dimensions only once if possible, or use clientWidth
+                const width = noBtn.offsetWidth;
+                const height = noBtn.offsetHeight;
+                
+                const maxX = window.innerWidth - width;
+                const maxY = window.innerHeight - height;
+
+                const randomX = Math.max(0, Math.floor(Math.random() * maxX));
+                const randomY = Math.max(0, Math.floor(Math.random() * maxY));
+
+                noBtn.style.position = 'fixed';
+                noBtn.style.left = randomX + "px";
+                noBtn.style.top = randomY + "px";
+                noBtn.style.zIndex = "1000";
+            }
+
+            // Passive listeners for better scroll/touch performance
+            noBtn.addEventListener("mouseover", moveButton);
+            noBtn.addEventListener("touchstart", moveButton, {passive: true});
+
+            audio.volume = 0.1;
+
+            function turnAudioOn() {
+            audio.play().then(() => {
+                audioToggle.checked = true;
+                audioLabel.textContent = "Audio On";
+            }).catch(e => console.log("Play failed:", e));
+        }
+
+        // ลองเล่นทันทีตอนโหลดหน้า (ส่วนใหญ่จะโดนบล็อกแต่ลองไว้ก่อน)
+        turnAudioOn();
+
+        // ดักทุก interaction แรกสุดที่เป็นไปได้ ให้เพลงเล่นทันทีที่ทำได้
+        ['click', 'touchstart', 'mousemove', 'keydown', 'scroll'].forEach(evt => {
+            document.addEventListener(evt, function handler() {
+                if (audio.paused) turnAudioOn();
+            }, { once: true, passive: true });
+        });
+
+        audioToggle.addEventListener('change', function() {
+            if (this.checked) {
+                turnAudioOn();
+            } else {
+                audio.pause();
+                audioLabel.textContent = "Audio Off";
+            }
+        });
+        })();
+    </script>
+</body>
+</html>
